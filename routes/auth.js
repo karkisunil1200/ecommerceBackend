@@ -27,17 +27,24 @@ router.post("/login", async (req, res) => {
   console.log("I was here ");
   try {
     const user = await User.findOne({ username: req.body.username });
-
+    //check if the user is in the database
     !user && res.status(401).json("Wrong Credentials");
-
+    //decrypt password
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.PASS_SEC
     );
-    const password = hashedPassword.toString(CryptoJS.enc.Utf8);
-    password !== req.body.password && res.status(401).json("Wrong credentials");
+    // convert it to the string of original password
+    const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+    // check if the password matches
+    originalPassword !== req.body.password &&
+      res.status(401).json("Wrong credentials");
 
-    res.status(200).json(user);
+    // not sending password response from user document where it stores data
+    // just giving user would give lots of object
+    const { password, ...others } = user._doc;
+
+    res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);
   }
