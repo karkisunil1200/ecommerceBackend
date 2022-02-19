@@ -22,6 +22,7 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
+// UPDATE USER
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
