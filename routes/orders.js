@@ -49,7 +49,7 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
 router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
     const orders = await Order.findOne({ userId: req.params.userId });
-    res.status(200).json(order);
+    res.status(200).json(orders);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -73,7 +73,7 @@ router.get("/income", verifyTokenAndAdmin, async (req, res) => {
   const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
 
   try {
-    const data = await User.aggregate([
+    const income = await User.aggregate([
       { $match: { createdAt: { $gte: lastYear } } },
       {
         $project: {
